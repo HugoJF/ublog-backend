@@ -1,4 +1,4 @@
-import {BaseHandler} from "../../base-handler";
+import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {GetPostDto} from "../../dtos/get-post-dto";
 import {PostService} from "../../services/post-service";
@@ -12,12 +12,12 @@ export class PostGetHandler extends BaseHandler {
     }
 
     async handle() {
-        const body = await this.validatePathParameters(GetPostDto);
+        const parameters = await this.parsePathParameters(GetPostDto);
 
-        if (!body) {
+        if (!parameters) {
             throw new Error();
         }
 
-        return this.posts.get(body.slug);
+        return this.posts.get(parameters.slug);
     }
 }

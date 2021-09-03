@@ -1,4 +1,4 @@
-import {BaseHandler} from "../../base-handler";
+import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {IndexPostDto} from "../../dtos/index-post-dto";
 import {PostService} from "../../services/post-service";
@@ -12,7 +12,7 @@ export class PostIndexHandler extends BaseHandler {
     }
 
     async handle() {
-        const body = await this.validateQueryString(IndexPostDto);
+        const body = await this.parseQueryString(IndexPostDto);
 
         return this.posts.index(body?.pagination);
     }

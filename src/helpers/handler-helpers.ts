@@ -1,4 +1,4 @@
-import {BaseHandler} from "../base-handler";
+import {BaseHandler} from "../handlers/base-handler";
 import {container, InjectionToken} from "tsyringe";
 import {APIGatewayEvent} from "aws-lambda";
 

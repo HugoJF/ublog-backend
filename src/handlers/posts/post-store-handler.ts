@@ -1,4 +1,4 @@
-import {BaseHandler} from "../../base-handler";
+import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {Post} from "../../entities/post";
 import {PostService} from "../../services/post-service";
@@ -12,7 +12,7 @@ export class PostStoreHandler extends BaseHandler {
     }
 
     async handle() {
-        const post = await this.entityFromBody(Post);
+        const post = await this.parseBody(Post);
 
         return this.posts.put(post);
     }
