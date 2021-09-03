@@ -45,14 +45,14 @@ custom:
 
 functions:
   postsIndex:
-    handler: src/handlers/posts.index
+    handler: src/handlers/posts/index.index
     events:
       - httpApi: 'GET /posts'
   postsStore:
-    handler: src/handlers/posts.store
+    handler: src/handlers/posts/index.store
     events:
       - httpApi: 'POST /posts'
   postsGet:
-    handler: src/handlers/posts.get
+    handler: src/handlers/posts/index.get
     events:
       - httpApi: 'GET /posts/{slug}'

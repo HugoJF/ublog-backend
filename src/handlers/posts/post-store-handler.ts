@@ -1,7 +1,7 @@
-import {BaseHandler} from "../base-handler";
+import {BaseHandler} from "../../base-handler";
 import {injectable} from "tsyringe";
-import {Post} from "../entities/post";
-import {PostService} from "../services/post-service";
+import {Post} from "../../entities/post";
+import {PostService} from "../../services/post-service";
 
 @injectable()
 export class PostStoreHandler extends BaseHandler {
