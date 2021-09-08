@@ -94,7 +94,7 @@ export class PostService {
             }
         }).promise()
 
-        // store metadata
+        // store metadataserv
         if (current === 0) {
             await ddb.put({
                 TableName: 'posts',
