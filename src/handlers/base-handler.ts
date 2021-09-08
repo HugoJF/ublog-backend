@@ -27,7 +27,7 @@ export abstract class BaseHandler {
             throw new InvalidDataError(data);
         }
 
-        const entity = plainToClass(validatorClass, this.event.queryStringParameters);
+        const entity = plainToClass(validatorClass, data);
 
         const errors = await validate(entity);
         if (errors.length > 0) {

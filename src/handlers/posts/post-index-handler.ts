@@ -12,7 +12,7 @@ export class PostIndexHandler extends BaseHandler {
     }
 
     async handle() {
-        const body = await this.parseQueryString(IndexPostDto);
+        const body = await this.parseQueryString(IndexPostDto).catch(e => null);
 
         return this.posts.index(body?.pagination);
     }

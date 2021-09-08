@@ -19,11 +19,15 @@ resources: # CloudFormation template syntax
       Properties:
         TableName: posts
         AttributeDefinitions:
-          - AttributeName: slug
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
             AttributeType: S
         KeySchema:
-          - AttributeName: slug
+          - AttributeName: PK
             KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
@@ -44,6 +48,10 @@ custom:
     # Uncomment only if you already have a DynamoDB running locally
 
 functions:
+  postsVersions:
+    handler: src/handlers/posts/index.versions
+    events:
+      - httpApi: 'GET /posts/{slug}/versions'
   postsIndex:
     handler: src/handlers/posts/index.index
     events:
