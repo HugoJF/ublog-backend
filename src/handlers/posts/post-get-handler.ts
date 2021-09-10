@@ -2,6 +2,8 @@ import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {GetPostDto} from "../../dtos/get-post-dto";
 import {PostService} from "../../services/post-service";
+import {plainToClass} from "class-transformer";
+import {Post} from "../../entities/post";
 
 @injectable()
 export class PostGetHandler extends BaseHandler {
@@ -18,6 +20,8 @@ export class PostGetHandler extends BaseHandler {
             throw new Error();
         }
 
-        return this.posts.get(pathParameters.slug, pathParameters.version);
+        const raw = await this.posts.get(pathParameters.slug, pathParameters.version);
+
+        return plainToClass(Post, raw, {excludeExtraneousValues: true});
     }
 }

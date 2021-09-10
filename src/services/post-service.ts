@@ -143,8 +143,8 @@ export class PostService {
             Item: {
                 PK: post.slug,
                 SK: 'v0',
-                version: next,
                 ...post,
+                version: next,
             }
         }).promise()
 
@@ -183,6 +183,6 @@ export class PostService {
             }).promise()
         }
 
-        return post;
+        return {...post, version: next};
     }
 }
