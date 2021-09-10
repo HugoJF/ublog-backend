@@ -137,14 +137,18 @@ export class PostService {
         // If post does not exist, default to version 0 (next = 1)
         const next = (current ?? 0) + 1;
 
+        const versionedPost: Post = {
+            ...post,
+            version: next,
+        }
+
         // Put v0
         await ddb.put({
             TableName: 'posts',
             Item: {
                 PK: post.slug,
                 SK: 'v0',
-                ...post,
-                version: next,
+                ...versionedPost,
             }
         }).promise()
 
@@ -154,7 +158,7 @@ export class PostService {
             Item: {
                 PK: post.slug,
                 SK: `v${next}`,
-                ...post,
+                ...versionedPost,
             }
         }).promise()
 
@@ -183,6 +187,6 @@ export class PostService {
             }).promise()
         }
 
-        return {...post, version: next};
+        return versionedPost;
     }
 }
