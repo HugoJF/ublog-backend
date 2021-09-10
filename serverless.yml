@@ -72,3 +72,7 @@ functions:
     handler: src/handlers/posts/index.delete
     events:
       - httpApi: 'DELETE /posts/{slug}'
+  postsRollback:
+    handler: src/handlers/posts/index.rollback
+    events:
+      - httpApi: 'PUT /posts/{slug}/versions/{version}'
