@@ -29,7 +29,7 @@ describe('versioning of posts', () => {
         const post = await service.get(slug);
 
         // Assert
-        expect(versions).toStrictEqual({versions: ['v1']});
+        expect(versions).toStrictEqual({versions: ['1']});
         expect(post).toEqual(expect.objectContaining(v1));
         expect(post?.['version']).toEqual(1);
     })
@@ -46,7 +46,7 @@ describe('versioning of posts', () => {
             const post = await service.get(slug);
 
             // Assert
-            expect(versions).toStrictEqual({versions: ['v1', 'v2']});
+            expect(versions).toStrictEqual({versions: ['1', '2']});
             expect(post).toEqual(expect.objectContaining(v2));
             expect(post?.['version']).toEqual(2);
         });
@@ -58,7 +58,7 @@ describe('versioning of posts', () => {
             const post = await service.get(slug);
 
             // Assert
-            expect(versions).toStrictEqual({versions: ['v1', 'v2']});
+            expect(versions).toStrictEqual({versions: ['1', '2']});
             expect(post).toEqual(expect.objectContaining(v1));
             expect(post?.['version']).toEqual(1);
         })
@@ -81,7 +81,7 @@ describe('versioning of posts', () => {
             const versions = await service.versions(slug);
 
             // Assert
-            expect(versions).toStrictEqual({versions: ['v1', 'v2', 'v3']});
+            expect(versions).toStrictEqual({versions: ['1', '2', '3']});
         })
     })
 })

@@ -40,7 +40,10 @@ export class PostService {
             },
         }).promise()
 
-        const items = collect(response.Items).pluck('SK').except(['v0']);
+        const items = collect(response.Items)
+            .pluck('SK')
+            .except(['v0'])
+            .map((i: string) => i.replace('v', ''));
 
         return {
             versions: items.all()
