@@ -52,6 +52,10 @@ functions:
     handler: src/handlers/posts/index.versions
     events:
       - httpApi: 'GET /posts/{slug}/versions'
+  postVersion:
+    handler: src/handlers/posts/index.get
+    events:
+      - httpApi: 'GET /posts/{slug}/versions/{version}'
   postsIndex:
     handler: src/handlers/posts/index.index
     events:
@@ -64,3 +68,7 @@ functions:
     handler: src/handlers/posts/index.get
     events:
       - httpApi: 'GET /posts/{slug}'
+  postsDelete:
+    handler: src/handlers/posts/index.delete
+    events:
+      - httpApi: 'DELETE /posts/{slug}'

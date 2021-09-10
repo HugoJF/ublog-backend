@@ -2,6 +2,7 @@ import {injectable} from "tsyringe";
 import {Post} from "../entities/post";
 import {ddb} from "../dynamodb";
 import {collect} from 'collect.js';
+import {WriteRequests} from "aws-sdk/clients/dynamodb";
 
 @injectable()
 export class PostService {
@@ -46,34 +47,97 @@ export class PostService {
         };
     }
 
-    async get(slug: string) {
+    async get(slug: string, version = 0) {
         const response = await ddb.get({
             TableName: 'posts',
             Key: {
                 PK: slug,
-                SK: 'v0',
+                SK: `v${version}`,
             }
         }).promise();
 
         return response.Item;
     }
 
-    async put(post: Post) {
-        const {slug} = post;
+    async delete(slug: string) {
+        // Fetch all items in Partition Key
+        const sks = await ddb.query({
+            TableName: 'posts',
+            KeyConditionExpression: 'PK = :pk',
+            ProjectionExpression: 'PK, SK',
+            ExpressionAttributeValues: {
+                ':pk': slug,
+            },
+        }).promise();
 
-        // check latest version
-        const v0 = await ddb.get({
-            TableName: 'posts', Key: {
+        // If nothing found, bail
+        if (!sks.Items || sks.Items.length === 0) {
+            return;
+        }
+
+        // Build the WriteRequests
+        const requests: WriteRequests = sks.Items.map(item => {
+            return {
+                DeleteRequest: {
+                    Key: {
+                        PK: item['PK'],
+                        SK: item['SK']
+                    },
+                }
+            }
+        })
+
+        // Batch delete
+        await ddb.batchWrite({
+            RequestItems: {
+                posts: requests
+            }
+        }).promise();
+
+        return;
+    }
+
+    async rollBack(slug: string, version: number) {
+        const post = await this.get(slug, version);
+
+        // Update v0
+        await ddb.put({
+            TableName: 'posts',
+            Item: {
+                ...post,
                 PK: slug,
                 SK: 'v0',
+                version: version,
+            }
+        }).promise()
+    }
+
+    async latestVersion(slug: string) {
+        const meta = await ddb.get({
+            TableName: 'posts',
+            Key: {
+                PK: slug,
+                SK: 'meta',
             }
         }).promise()
 
-        // if v0 does not exist, default to version 0 (next = 1)
-        const current = v0.Item?.version ?? 0;
-        const next = current + 1;
+        if (!meta.Item) {
+            return null;
+        }
 
-        // put v0
+        return meta.Item['version'];
+    }
+
+    async put(post: Post) {
+        const {slug} = post;
+
+        // Check latest version
+        const current = await this.latestVersion(slug);
+
+        // If post does not exist, default to version 0 (next = 1)
+        const next = (current ?? 0) + 1;
+
+        // Put v0
         await ddb.put({
             TableName: 'posts',
             Item: {
@@ -84,7 +148,7 @@ export class PostService {
             }
         }).promise()
 
-        // store vx
+        // Create new version
         await ddb.put({
             TableName: 'posts',
             Item: {
@@ -94,15 +158,28 @@ export class PostService {
             }
         }).promise()
 
-        // store metadataserv
-        if (current === 0) {
+        // Store metadata
+        if (current === null) {
             await ddb.put({
                 TableName: 'posts',
                 Item: {
-                    PK: post.slug,
+                    PK: slug,
                     SK: 'meta',
+                    version: next,
                     created_at: (new Date).toISOString(),
                 },
+            }).promise()
+        } else {
+            await ddb.update({
+                TableName: 'posts',
+                Key: {
+                    PK: slug,
+                    SK: 'meta',
+                },
+                UpdateExpression: 'ADD version :inc',
+                ExpressionAttributeValues: {
+                    ':inc': 1,
+                }
             }).promise()
         }
 

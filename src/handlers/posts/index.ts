@@ -5,8 +5,10 @@ import {PostGetHandler} from "./post-get-handler";
 import {PostIndexHandler} from "./post-index-handler";
 import {PostVersionsHandler} from "./post-versions-handler";
 import {generateHandler} from "../../helpers/handler-helpers";
+import {PostDeleteHandler} from "./post-delete-handler";
 
 module.exports.index = generateHandler(PostIndexHandler)
 module.exports.get = generateHandler(PostGetHandler);
 module.exports.store = generateHandler(PostStoreHandler);
 module.exports.versions = generateHandler(PostVersionsHandler);
+module.exports.delete = generateHandler(PostDeleteHandler);
