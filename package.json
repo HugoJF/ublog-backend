@@ -8,9 +8,11 @@
     "class-validator": "^0.13.1",
     "collect.js": "^4.28.6",
     "serverless-dynamodb-local": "^0.2.40",
-    "tsyringe": "^4.6.0"
+    "tsyringe": "^4.6.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/jest": "^27.0.1",
     "aws-sdk": "^2.982.0",
     "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "reflect-metadata": "^0.1.13",
