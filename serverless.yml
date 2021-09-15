@@ -17,7 +17,7 @@ resources: # CloudFormation template syntax
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: posts
+        TableName: ublog
         AttributeDefinitions:
           - AttributeName: PK
             AttributeType: S

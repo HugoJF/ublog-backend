@@ -8,7 +8,7 @@ import {WriteRequests} from "aws-sdk/clients/dynamodb";
 export class PostService {
     async index(pagination?: string) {
         const baseParams = {
-            TableName: 'posts',
+            TableName: 'ublog',
             FilterExpression: 'SK = :v',
             ExpressionAttributeValues: {
                 ':v': 'v0',
@@ -31,7 +31,7 @@ export class PostService {
 
     async versions(slug: string) {
         const response = await ddb.query({
-            TableName: 'posts',
+            TableName: 'ublog',
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :v)',
             ProjectionExpression: 'SK',
             ExpressionAttributeValues: {
@@ -52,7 +52,7 @@ export class PostService {
 
     async get(slug: string, version = 0) {
         const response = await ddb.get({
-            TableName: 'posts',
+            TableName: 'ublog',
             Key: {
                 PK: slug,
                 SK: `v${version}`,
@@ -65,7 +65,7 @@ export class PostService {
     async delete(slug: string) {
         // Fetch all items in Partition Key
         const sks = await ddb.query({
-            TableName: 'posts',
+            TableName: 'ublog',
             KeyConditionExpression: 'PK = :pk',
             ProjectionExpression: 'PK, SK',
             ExpressionAttributeValues: {
@@ -105,7 +105,7 @@ export class PostService {
 
         // Update v0
         await ddb.put({
-            TableName: 'posts',
+            TableName: 'ublog',
             Item: {
                 ...post,
                 PK: slug,
@@ -117,7 +117,7 @@ export class PostService {
 
     async latestVersion(slug: string) {
         const meta = await ddb.get({
-            TableName: 'posts',
+            TableName: 'ublog',
             Key: {
                 PK: slug,
                 SK: 'meta',
@@ -147,7 +147,7 @@ export class PostService {
 
         // Put v0
         await ddb.put({
-            TableName: 'posts',
+            TableName: 'ublog',
             Item: {
                 PK: post.slug,
                 SK: 'v0',
@@ -157,7 +157,7 @@ export class PostService {
 
         // Create new version
         await ddb.put({
-            TableName: 'posts',
+            TableName: 'ublog',
             Item: {
                 PK: post.slug,
                 SK: `v${next}`,
@@ -168,7 +168,7 @@ export class PostService {
         // Store metadata
         if (current === null) {
             await ddb.put({
-                TableName: 'posts',
+                TableName: 'ublog',
                 Item: {
                     PK: slug,
                     SK: 'meta',
@@ -178,7 +178,7 @@ export class PostService {
             }).promise()
         } else {
             await ddb.update({
-                TableName: 'posts',
+                TableName: 'ublog',
                 Key: {
                     PK: slug,
                     SK: 'meta',

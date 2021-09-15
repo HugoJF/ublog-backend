@@ -6,7 +6,7 @@ import {Tag} from "../entities/tag";
 export class TagService {
     async index() {
         const query = await ddb.query({
-            TableName: 'posts',
+            TableName: 'ublog',
             IndexName: 'GSI1',
             KeyConditionExpression: 'GSI1PK = :pk',
             ExpressionAttributeValues: {
@@ -20,7 +20,7 @@ export class TagService {
     async put(tag: Tag) {
         // Create new version
         await ddb.put({
-            TableName: 'posts',
+            TableName: 'ublog',
             Item: {
                 PK: `TAG#${tag.slug}`,
                 SK: 'TAG',
