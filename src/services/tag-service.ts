@@ -5,6 +5,30 @@ import collect from 'collect.js';
 
 @injectable()
 export class TagService {
+    async get(ids: string | string[]) {
+        if (!Array.isArray(ids)) {
+            ids = [ids];
+        }
+
+        // Build the WriteRequests
+        const keys = ids.map(item => {
+            return {
+                PK:  `TAG#${item}`,
+                SK:  'TAG',
+            }
+        })
+
+        const tags = await ddb.batchGet({
+            RequestItems: {
+                [tableName]: {
+                    Keys: keys
+                },
+            }
+        }).promise();
+
+        return tags.Responses?.[tableName];
+    }
+
     async index() {
         const query = await ddb.query({
             TableName: tableName,
@@ -38,15 +62,15 @@ export class TagService {
         await ddb.put({
             TableName: tableName,
             Item: {
-                PK: postSlug,
-                SK: `TAG#${tagSlug}`,
-                GSI1PK: `TAG#${tagSlug}`,
-                GSI1SK: postSlug,
+                PK: `TAG#${postSlug}`,
+                SK: `TAG`,
+                GSI1PK: `TAG`,
+                GSI1SK: `TAG#${postSlug}`,
             }
         }).promise()
     }
 
-    async listTags(slug: string) {
+    async listTags(slug: string): Promise<string[]> {
         const raw = await ddb.query({
             TableName: tableName,
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
