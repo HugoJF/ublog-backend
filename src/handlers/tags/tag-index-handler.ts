@@ -5,9 +5,10 @@ import {PostService} from "../../services/post-service";
 import {CreateTagDto} from "../../dtos/create-tag-dto";
 import {TagService} from "../../services/tag-service";
 import {plainToClass} from "class-transformer";
+import {Tag} from "../../entities/tag";
 
 @injectable()
-export class TagStoreHandle extends BaseHandler {
+export class TagIndexHandler extends BaseHandler {
     constructor(
         private tags: TagService,
     ) {
@@ -15,8 +16,12 @@ export class TagStoreHandle extends BaseHandler {
     }
 
     async handle() {
-        const tag = await this.parseBody(CreateTagDto);
+        const raw = this.tags.index();
 
-        return this.tags.put(tag);
+        if (!raw) {
+            return [];
+        }
+
+        return plainToClass(Tag, raw, {excludeExtraneousValues: true});
     }
 }
