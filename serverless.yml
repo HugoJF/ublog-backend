@@ -27,10 +27,6 @@ resources: # CloudFormation template syntax
             AttributeType: S
           - AttributeName: GSI1SK
             AttributeType: S
-          - AttributeName: GSIKOPK
-            AttributeType: S
-          - AttributeName: GSIKOSK
-            AttributeType: S
         KeySchema:
           - AttributeName: PK
             KeyType: HASH
@@ -42,18 +38,6 @@ resources: # CloudFormation template syntax
               - AttributeName: GSI1PK
                 KeyType: HASH
               - AttributeName: GSI1SK
-                KeyType: RANGE
-            Projection:
-              ProjectionType: ALL
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-
-          - IndexName: GSIKO
-            KeySchema:
-              - AttributeName: GSIKOPK
-                KeyType: HASH
-              - AttributeName: GSIKOSK
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
