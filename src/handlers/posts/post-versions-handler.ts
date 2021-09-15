@@ -1,6 +1,5 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
-import {Post} from "../../entities/post";
 import {PostService} from "../../services/post-service";
 import {GetPostDto} from "../../dtos/get-post-dto";
 

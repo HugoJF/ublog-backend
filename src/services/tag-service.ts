@@ -18,6 +18,10 @@ export class TagService {
             }
         })
 
+        if (keys.length === 0) {
+            return [];
+        }
+
         const tags = await ddb.batchGet({
             RequestItems: {
                 [tableName]: {

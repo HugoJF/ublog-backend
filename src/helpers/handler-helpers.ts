@@ -6,8 +6,6 @@ export function generateHandler<T extends BaseHandler>(token: InjectionToken<T>)
     return async (event: APIGatewayEvent) => {
         const handler = container.resolve(token);
 
-        console.log(event);
-
         handler.setEvent(event);
 
         const result = await handler.handle();
