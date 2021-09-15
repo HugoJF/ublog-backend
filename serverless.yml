@@ -112,7 +112,7 @@ functions:
   tagsStore:
     handler: src/handlers/tags/index.store
     events:
-      - httpApi: 'PUT /tags'
+      - httpApi: 'POST /tags'
   tagsIndex:
     handler: src/handlers/tags/index.index
     events:
