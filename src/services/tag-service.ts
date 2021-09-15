@@ -1,5 +1,5 @@
 import {injectable} from "tsyringe";
-import {ddb} from "../dynamodb";
+import {ddb, tableName} from "../dynamodb";
 import {Tag} from "../entities/tag";
 import collect from 'collect.js';
 
@@ -7,7 +7,7 @@ import collect from 'collect.js';
 export class TagService {
     async index() {
         const query = await ddb.query({
-            TableName: 'ublog',
+            TableName: tableName,
             IndexName: 'GSI1',
             KeyConditionExpression: 'GSI1PK = :pk',
             ExpressionAttributeValues: {
@@ -21,7 +21,7 @@ export class TagService {
     async put(tag: Tag) {
         // Create new version
         await ddb.put({
-            TableName: 'ublog',
+            TableName: tableName,
             Item: {
                 PK: `TAG#${tag.slug}`,
                 SK: 'TAG',
@@ -36,7 +36,7 @@ export class TagService {
 
     async tagPost(postSlug: string, tagSlug: string) {
         await ddb.put({
-            TableName: 'ublog',
+            TableName: tableName,
             Item: {
                 PK: postSlug,
                 SK: `TAG#${tagSlug}`,
@@ -48,7 +48,7 @@ export class TagService {
 
     async listTags(slug: string) {
         const raw = await ddb.query({
-            TableName: 'ublog',
+            TableName: tableName,
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
             ExpressionAttributeValues: {
                 ':pk': slug,
