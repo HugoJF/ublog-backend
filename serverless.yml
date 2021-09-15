@@ -101,3 +101,11 @@ functions:
     handler: src/handlers/tags/index.index
     events:
       - httpApi: 'GET /tags'
+  tagPostStore:
+    handler: src/handlers/tags/index.tag
+    events:
+      - httpApi: 'POST /posts/{post_slug}/tag/{tag_slug}'
+  listPostTags:
+    handler: src/handlers/tags/index.list
+    events:
+      - httpApi: 'GET /posts/{slug}/tags'

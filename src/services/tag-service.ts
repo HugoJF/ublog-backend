@@ -1,6 +1,7 @@
 import {injectable} from "tsyringe";
 import {ddb} from "../dynamodb";
 import {Tag} from "../entities/tag";
+import collect from 'collect.js';
 
 @injectable()
 export class TagService {
@@ -31,5 +32,34 @@ export class TagService {
         }).promise()
 
         return tag;
+    }
+
+    async tagPost(postSlug: string, tagSlug: string) {
+        await ddb.put({
+            TableName: 'ublog',
+            Item: {
+                PK: postSlug,
+                SK: `TAG#${tagSlug}`,
+                GSI1PK: `TAG#${tagSlug}`,
+                GSI1SK: postSlug,
+            }
+        }).promise()
+    }
+
+    async listTags(slug: string) {
+        const raw = await ddb.query({
+            TableName: 'ublog',
+            KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
+            ExpressionAttributeValues: {
+                ':pk': slug,
+                ':sk': 'TAG#',
+            }
+        }).promise()
+
+        const ids = collect(raw.Items)
+            .map(item => item['SK'])
+            .map((sk: string) => sk.substr(4));
+
+        return ids.toArray()
     }
 }
