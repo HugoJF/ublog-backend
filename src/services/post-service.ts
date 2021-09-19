@@ -9,8 +9,10 @@ export class PostService {
         return await Post.find({
             gsi1pk: 'post',
         }, {
-            index: 'gsi1'
+            index: 'gsi1',
+            reverse: true,
         });
+
     }
 
     async versions(slug: string) {
