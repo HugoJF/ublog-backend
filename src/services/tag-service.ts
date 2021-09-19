@@ -21,7 +21,7 @@ export class TagService {
 
         const response = await ddb.batchGet(batch);
 
-        return response['Responses'].ublog;
+        return response['Responses']?.ublog ?? [];
     }
 
     async index() {
@@ -38,6 +38,13 @@ export class TagService {
 
     async tagPost(postSlug: string, tagSlug: string) {
         return await PostTag.create({
+            post_slug: postSlug,
+            tag_slug: tagSlug,
+        })
+    }
+
+    async untagPost(postSlug: string, tagSlug: string) {
+        return await PostTag.remove({
             post_slug: postSlug,
             tag_slug: tagSlug,
         })
