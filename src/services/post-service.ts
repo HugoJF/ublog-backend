@@ -1,14 +1,15 @@
 import {injectable} from "tsyringe";
-import {Post} from "../entities/post";
-import {ddb, tableName} from "../dynamodb";
+import {Post as PostDto} from "../entities/post";
 import {collect} from 'collect.js';
 import {WriteRequest, WriteRequests} from "aws-sdk/clients/dynamodb";
+import {client, Post, PostVersion} from "../dynamodb/models";
+
 
 @injectable()
 export class PostService {
     async index(pagination?: string) {
         const baseParams = {
-            TableName: tableName,
+            TableName: 'ublog',
             IndexName: 'GSI1',
             KeyConditionExpression: 'GSI1PK = :pk',
             ExpressionAttributeValues: {
@@ -22,7 +23,7 @@ export class PostService {
             }
         }
 
-        const response = await ddb.query({
+        const response = await client.query({
             ...baseParams,
             ...(pagination && paginationParams),
         }).promise();
@@ -31,8 +32,8 @@ export class PostService {
     }
 
     async versions(slug: string) {
-        const response = await ddb.query({
-            TableName: tableName,
+        const response = await client.query({
+            TableName: 'ublog',
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :v)',
             ProjectionExpression: 'SK',
             ExpressionAttributeValues: {
@@ -52,21 +53,16 @@ export class PostService {
     }
 
     async get(slug: string, version = 0) {
-        const response = await ddb.get({
-            TableName: tableName,
-            Key: {
-                PK: slug,
-                SK: `v${version}`,
-            }
-        }).promise();
-
-        return response.Item;
+        return await PostVersion.get({
+            slug: slug,
+            version: version
+        });
     }
 
     async delete(slug: string) {
         // Fetch all items in Partition Key
-        const sks = await ddb.query({
-            TableName: tableName,
+        const sks = await client.query({
+            TableName: 'ublog',
             KeyConditionExpression: 'PK = :pk',
             ProjectionExpression: 'PK, SK',
             ExpressionAttributeValues: {
@@ -93,9 +89,9 @@ export class PostService {
         })
 
         // Batch delete
-        await ddb.batchWrite({
+        await client.batchWrite({
             RequestItems: {
-                [tableName]: requests
+                ['ublog']: requests
             }
         }).promise();
 
@@ -106,23 +102,23 @@ export class PostService {
         const post = await this.get(slug, version);
 
         // Update v0
-        await ddb.put({
-            TableName: tableName,
-            Item: {
-                ...post,
-                PK: slug,
-                SK: 'v0',
-                version: version,
-            }
-        }).promise()
+        // await client.put({
+        //     TableName: 'ublog',
+        //     Item: {
+        //         // ...post,
+        //         PK: slug,
+        //         SK: 'v0',
+        //         version: version,
+        //     }
+        // }).promise()
     }
 
     async latestVersion(slug: string) {
-        const meta = await ddb.get({
-            TableName: tableName,
+        const meta = await client.get({
+            TableName: 'ublog',
             Key: {
-                PK: slug,
-                SK: 'meta',
+                pk: slug,
+                sk: 'meta',
             }
         }).promise()
 
@@ -133,7 +129,7 @@ export class PostService {
         return meta.Item['version'];
     }
 
-    async put(post: Post) {
+    async put(post: PostDto) {
         const {slug} = post;
 
         // Check latest version
@@ -142,50 +138,42 @@ export class PostService {
         // If post does not exist, default to version 0 (next = 1)
         const next = (current ?? 0) + 1;
 
-        const versionedPost: Post = {
+        const versionedPost: PostDto = {
             ...post,
             version: next,
         }
 
         // Put v0
-        await ddb.put({
-            TableName: tableName,
-            Item: {
-                PK: post.slug,
-                SK: 'v0',
-                GSI1PK: 'POST',
-                GSI1SK: post.slug,
-                ...versionedPost,
-            }
-        }).promise()
+        await Post.create({
+            ...versionedPost,
+            abstract: 'asd',
+            public: true,
+        })
 
         // Create new version
-        await ddb.put({
-            TableName: tableName,
-            Item: {
-                PK: post.slug,
-                SK: `v${next}`,
-                ...versionedPost,
-            }
-        }).promise()
+        await PostVersion.create({
+            ...versionedPost,
+            abstract: 'asd',
+            public: true,
+        })
 
         // Store metadata
         if (current === null) {
-            await ddb.put({
-                TableName: tableName,
+            await client.put({
+                TableName: 'ublog',
                 Item: {
-                    PK: slug,
-                    SK: 'meta',
+                    pk: slug,
+                    sk: 'meta',
                     version: next,
                     created_at: (new Date).toISOString(),
                 },
             }).promise()
         } else {
-            await ddb.update({
-                TableName: tableName,
+            await client.update({
+                TableName: 'ublog',
                 Key: {
-                    PK: slug,
-                    SK: 'meta',
+                    pk: slug,
+                    sk: 'meta',
                 },
                 UpdateExpression: 'ADD version :inc',
                 ExpressionAttributeValues: {

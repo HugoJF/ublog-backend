@@ -1,7 +1,7 @@
 import {injectable} from "tsyringe";
-import {ddb, tableName} from "../dynamodb";
 import {Tag} from "../entities/tag";
 import collect from 'collect.js';
+import {client} from "../dynamodb/models";
 
 @injectable()
 export class TagService {
@@ -13,8 +13,8 @@ export class TagService {
         // Build the WriteRequests
         const keys = ids.map(item => {
             return {
-                PK:  `TAG#${item}`,
-                SK:  'TAG',
+                PK: `TAG#${item}`,
+                SK: 'TAG',
             }
         })
 
@@ -22,20 +22,20 @@ export class TagService {
             return [];
         }
 
-        const tags = await ddb.batchGet({
+        const tags = await client.batchGet({
             RequestItems: {
-                [tableName]: {
+                ['ublog']: {
                     Keys: keys
                 },
             }
         }).promise();
 
-        return tags.Responses?.[tableName];
+        return tags.Responses?.['ublog'];
     }
 
     async index() {
-        const query = await ddb.query({
-            TableName: tableName,
+        const query = await client.query({
+            TableName: 'ublog',
             IndexName: 'GSI1',
             KeyConditionExpression: 'GSI1PK = :pk',
             ExpressionAttributeValues: {
@@ -48,8 +48,8 @@ export class TagService {
 
     async put(tag: Tag) {
         // Create new version
-        await ddb.put({
-            TableName: tableName,
+        await client.put({
+            TableName: 'ublog',
             Item: {
                 PK: `TAG#${tag.slug}`,
                 SK: 'TAG',
@@ -63,8 +63,8 @@ export class TagService {
     }
 
     async tagPost(postSlug: string, tagSlug: string) {
-        await ddb.put({
-            TableName: tableName,
+        await client.put({
+            TableName: 'ublog',
             Item: {
                 PK: `TAG#${postSlug}`,
                 SK: `TAG`,
@@ -75,8 +75,8 @@ export class TagService {
     }
 
     async listTags(slug: string): Promise<string[]> {
-        const raw = await ddb.query({
-            TableName: tableName,
+        const raw = await client.query({
+            TableName: 'ublog',
             KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
             ExpressionAttributeValues: {
                 ':pk': slug,

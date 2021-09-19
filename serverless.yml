@@ -19,25 +19,25 @@ resources: # CloudFormation template syntax
       Properties:
         TableName: ublog
         AttributeDefinitions:
-          - AttributeName: PK
+          - AttributeName: pk
             AttributeType: S
-          - AttributeName: SK
+          - AttributeName: sk
             AttributeType: S
-          - AttributeName: GSI1PK
+          - AttributeName: gsi1pk
             AttributeType: S
-          - AttributeName: GSI1SK
+          - AttributeName: gsi1sk
             AttributeType: S
         KeySchema:
-          - AttributeName: PK
+          - AttributeName: pk
             KeyType: HASH
-          - AttributeName: SK
+          - AttributeName: sk
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: GSI1
+          - IndexName: gsi1
             KeySchema:
-              - AttributeName: GSI1PK
+              - AttributeName: gsi1pk
                 KeyType: HASH
-              - AttributeName: GSI1SK
+              - AttributeName: gsi1sk
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

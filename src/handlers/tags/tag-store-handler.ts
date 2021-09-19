@@ -15,6 +15,7 @@ export class TagStoreHandler extends BaseHandler {
     }
 
     async handle() {
+        console.log(this.event);
         const tag = await this.parseBody(CreateTagDto);
 
         return this.tags.put(tag);
