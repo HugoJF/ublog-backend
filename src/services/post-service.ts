@@ -81,8 +81,6 @@ export class PostService {
         // Put v0
         await Post.create({
             ...versionedPost,
-            abstract: 'asd',
-            public: true,
         }, {
             exists: null,
         })
@@ -90,8 +88,6 @@ export class PostService {
         // Create new version
         await PostVersion.create({
             ...versionedPost,
-            abstract: 'asd',
-            public: true,
         }, {
             exists: null,
         })

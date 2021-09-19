@@ -7,10 +7,20 @@ export class Post {
     slug: string;
 
     @Transformers.Expose()
+    @Validators.IsDefined()
     title: string;
 
     @Transformers.Expose()
+    @Validators.IsDefined()
     body: string;
+
+    @Transformers.Expose()
+    @Validators.IsDefined()
+    abstract: string;
+
+    @Transformers.Expose()
+    @Validators.IsDefined()
+    public: boolean;
 
     @Transformers.Expose()
     @Validators.IsOptional()
