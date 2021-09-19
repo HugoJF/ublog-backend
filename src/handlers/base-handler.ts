@@ -22,6 +22,18 @@ export abstract class BaseHandler {
         return JSON.parse(this.event.body);
     }
 
+    async parseQueryString<T>(dto: ClassConstructor<T extends Object ? T : never>) {
+        return this.parse(this.event.queryStringParameters, dto);
+    }
+
+    async parsePathParameters<T>(dto: ClassConstructor<T extends Object ? T : never>) {
+        return this.parse(this.event.pathParameters, dto);
+    }
+
+    async parseBody<T>(dto: ClassConstructor<T extends Object ? T : never>) {
+        return this.parse(this.body(), dto);
+    }
+
     private async parse<D, T>(data: D, validatorClass: ClassConstructor<T extends Object ? T : never>) {
         if (!data) {
             throw new InvalidDataError(data);
@@ -35,18 +47,5 @@ export abstract class BaseHandler {
         }
 
         return entity;
-    }
-
-    async parseQueryString<T>(dto: ClassConstructor<T extends Object ? T : never>) {
-        return this.parse(this.event.queryStringParameters, dto);
-    }
-
-
-    async parsePathParameters<T>(dto: ClassConstructor<T extends Object ? T : never>) {
-        return this.parse(this.event.pathParameters, dto);
-    }
-
-    async parseBody<T>(dto: ClassConstructor<T extends Object ? T : never>) {
-        return this.parse(this.body(), dto);
     }
 }
