@@ -19,9 +19,9 @@ export class ListTagsHandler extends BaseHandler {
         const parameters = await this.parsePathParameters(ListPostTagsDto);
 
         const ids = await this.tags.listTags(parameters.slug);
-
+        console.log({ids})
         const tags = await this.tags.get(ids);
-
+        console.log({tags})
         return plainToClass(Tag, tags, {excludeExtraneousValues: true});
     }
 }

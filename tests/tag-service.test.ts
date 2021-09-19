@@ -17,6 +17,9 @@ describe('tag creation', () => {
         const tags = await service.index();
 
         // Assert
-        expect(tags).toEqual(expect.arrayContaining([angular, react]));
+        expect(tags).toEqual(expect.arrayContaining([
+            expect.objectContaining(angular),
+            expect.objectContaining(react),
+        ]));
     })
 })

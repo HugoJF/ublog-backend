@@ -1,92 +1,55 @@
 import {injectable} from "tsyringe";
-import {Tag} from "../entities/tag";
 import collect from 'collect.js';
-import {client} from "../dynamodb/models";
+import {Tag as TagEntity} from "../entities/tag";
+import {ddb, PostTag, Tag} from "../dynamodb/models";
 
 @injectable()
 export class TagService {
     async get(ids: string | string[]) {
+        const batch = {};
+
         if (!Array.isArray(ids)) {
             ids = [ids];
         }
 
         // Build the WriteRequests
-        const keys = ids.map(item => {
-            return {
-                PK: `TAG#${item}`,
-                SK: 'TAG',
-            }
+        ids.forEach(id => {
+            Tag.get({
+                slug: id,
+            }, {batch})
         })
 
-        if (keys.length === 0) {
-            return [];
-        }
+        const response = await ddb.batchGet(batch);
 
-        const tags = await client.batchGet({
-            RequestItems: {
-                ['ublog']: {
-                    Keys: keys
-                },
-            }
-        }).promise();
-
-        return tags.Responses?.['ublog'];
+        return response['Responses'].ublog;
     }
 
     async index() {
-        const query = await client.query({
-            TableName: 'ublog',
-            IndexName: 'GSI1',
-            KeyConditionExpression: 'GSI1PK = :pk',
-            ExpressionAttributeValues: {
-                ':pk': 'TAG',
-            }
-        }).promise();
-
-        return query.Items;
+        return Tag.find({
+            gsi1pk: 'tag',
+        }, {
+            index: 'gsi1',
+        })
     }
 
-    async put(tag: Tag) {
-        // Create new version
-        await client.put({
-            TableName: 'ublog',
-            Item: {
-                PK: `TAG#${tag.slug}`,
-                SK: 'TAG',
-                GSI1PK: 'TAG',
-                GSI1SK: `TAG#${tag.slug}`,
-                ...tag,
-            }
-        }).promise()
-
-        return tag;
+    async put(tag: TagEntity) {
+        return await Tag.create(tag, {exists: null});
     }
 
     async tagPost(postSlug: string, tagSlug: string) {
-        await client.put({
-            TableName: 'ublog',
-            Item: {
-                PK: `TAG#${postSlug}`,
-                SK: `TAG`,
-                GSI1PK: `TAG`,
-                GSI1SK: `TAG#${postSlug}`,
-            }
-        }).promise()
+        return await PostTag.create({
+            post_slug: postSlug,
+            tag_slug: tagSlug,
+        })
     }
 
     async listTags(slug: string): Promise<string[]> {
-        const raw = await client.query({
-            TableName: 'ublog',
-            KeyConditionExpression: 'PK = :pk AND begins_with(SK, :sk)',
-            ExpressionAttributeValues: {
-                ':pk': slug,
-                ':sk': 'TAG#',
-            }
-        }).promise()
+        const raw = await PostTag.find({
+            post_slug: slug,
+        })
 
-        const ids = collect(raw.Items)
-            .map(item => item['SK'])
-            .map((sk: string) => sk.substr(4));
+        const ids = collect(raw)
+            .map(item => item['tag_slug']);
 
         return ids.toArray()
     }
