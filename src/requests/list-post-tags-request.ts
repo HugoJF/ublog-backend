@@ -1,9 +1,6 @@
 import * as Validators from 'class-validator';
 
-export class GetPostDto {
+export class ListPostTagsRequest {
     @Validators.IsDefined()
     slug: string;
-
-    @Validators.IsOptional()
-    version?: number;
 }

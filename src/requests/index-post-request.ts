@@ -1,6 +1,6 @@
 import * as Validators from 'class-validator';
 
-export class IndexPostDto {
+export class IndexPostRequest {
     @Validators.IsOptional()
     pagination?: string;
 }

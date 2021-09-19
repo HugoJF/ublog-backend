@@ -1,6 +1,6 @@
 import * as Validators from 'class-validator';
 
-export class TagPostDto {
+export class TagPostRequest {
     @Validators.IsDefined()
     post_slug: string;
 

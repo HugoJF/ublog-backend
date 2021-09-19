@@ -1,7 +1,7 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {PostService} from "../../services/post-service";
-import {GetPostDto} from "../../dtos/get-post-dto";
+import {GetPostRequest} from "../../requests/get-post-request";
 
 @injectable()
 export class PostVersionsHandler extends BaseHandler {
@@ -13,7 +13,7 @@ export class PostVersionsHandler extends BaseHandler {
 
     async handle() {
         // TODO: update dto
-        const post = await this.parsePathParameters(GetPostDto);
+        const post = await this.parsePathParameters(GetPostRequest);
 
         return this.posts.versions(post.slug);
     }

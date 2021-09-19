@@ -1,10 +1,8 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {TagService} from "../../services/tag-service";
-import {TagPostDto} from "../../dtos/tag-post-dto";
-import {ListPostTagsDto} from "../../dtos/list-post-tags-dto";
+import {ListPostTagsRequest} from "../../requests/list-post-tags-request";
 import {plainToClass} from "class-transformer";
-import {Post} from "../../entities/post";
 import {Tag} from "../../entities/tag";
 
 @injectable()
@@ -16,7 +14,7 @@ export class ListTagsHandler extends BaseHandler {
     }
 
     async handle() {
-        const parameters = await this.parsePathParameters(ListPostTagsDto);
+        const parameters = await this.parsePathParameters(ListPostTagsRequest);
 
         const ids = await this.tags.listTags(parameters.slug);
         console.log({ids})

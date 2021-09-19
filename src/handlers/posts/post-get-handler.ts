@@ -1,6 +1,6 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
-import {GetPostDto} from "../../dtos/get-post-dto";
+import {GetPostRequest} from "../../requests/get-post-request";
 import {PostService} from "../../services/post-service";
 import {plainToClass} from "class-transformer";
 import {Post} from "../../entities/post";
@@ -14,7 +14,7 @@ export class PostGetHandler extends BaseHandler {
     }
 
     async handle() {
-        const pathParameters = await this.parsePathParameters(GetPostDto);
+        const pathParameters = await this.parsePathParameters(GetPostRequest);
 
         if (!pathParameters) {
             throw new Error();

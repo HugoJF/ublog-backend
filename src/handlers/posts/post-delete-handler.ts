@@ -1,6 +1,6 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
-import {GetPostDto} from "../../dtos/get-post-dto";
+import {GetPostRequest} from "../../requests/get-post-request";
 import {PostService} from "../../services/post-service";
 
 @injectable()
@@ -12,7 +12,7 @@ export class PostDeleteHandler extends BaseHandler {
     }
 
     async handle() {
-        const parameters = await this.parsePathParameters(GetPostDto);
+        const parameters = await this.parsePathParameters(GetPostRequest);
 
         if (!parameters) {
             throw new Error();

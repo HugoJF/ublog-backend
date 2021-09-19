@@ -1,12 +1,12 @@
 import {Entity, OneSchema, Table} from 'dynamodb-onetable'
 import {DynamoDB} from "aws-sdk";
 import env from '../environments/environment';
-import {TagSchema} from "./tag";
-import {PostVersionSchema} from "./post-version";
-import {PostTagSchema} from "./post-tag";
-import {PostSchema} from "./post";
-import {ImageSchema} from "./image";
-import {PostMetaSchema} from "./post-meta";
+import {TagSchema} from "./schemas/tag";
+import {PostVersionSchema} from "./schemas/post-version";
+import {PostTagSchema} from "./schemas/post-tag";
+import {PostSchema} from "./schemas/post";
+import {ImageSchema} from "./schemas/image";
+import {PostMetaSchema} from "./schemas/post-meta";
 
 export const client = new DynamoDB.DocumentClient({
     region: env.region,

@@ -1,10 +1,7 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
-import {Post} from "../../entities/post";
-import {PostService} from "../../services/post-service";
-import {CreateTagDto} from "../../dtos/create-tag-dto";
 import {TagService} from "../../services/tag-service";
-import {plainToClass} from "class-transformer";
+import {Tag} from "../../entities/tag";
 
 @injectable()
 export class TagStoreHandler extends BaseHandler {
@@ -15,8 +12,7 @@ export class TagStoreHandler extends BaseHandler {
     }
 
     async handle() {
-        console.log(this.event);
-        const tag = await this.parseBody(CreateTagDto);
+        const tag = await this.parseBody(Tag);
 
         return this.tags.put(tag);
     }
