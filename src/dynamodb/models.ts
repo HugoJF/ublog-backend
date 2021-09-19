@@ -1,11 +1,12 @@
 import {Entity, OneSchema, Table} from 'dynamodb-onetable'
 import {DynamoDB} from "aws-sdk";
 import env from '../environments/environment';
-import {TagProperties, TagSchema} from "./tag";
+import {TagSchema} from "./tag";
 import {PostVersionSchema} from "./post-version";
-import {PostTagProperties, PostTagSchema} from "./post-tag";
-import {PostProperties, PostSchema} from "./post";
-import {ImageProperties, ImageSchema} from "./image";
+import {PostTagSchema} from "./post-tag";
+import {PostSchema} from "./post";
+import {ImageSchema} from "./image";
+import {PostMetaSchema} from "./post-meta";
 
 export const client = new DynamoDB.DocumentClient({
     region: env.region,
@@ -17,12 +18,13 @@ export const client = new DynamoDB.DocumentClient({
 export const MySchema: OneSchema = {
     indexes: {
         primary: {hash: 'pk', sort: 'sk'},
-        gsi1: {hash: 'gsi1pk', sort: 'gsi1sk', follow: true},
+        gsi1: {hash: 'gsi1pk', sort: 'gsi1sk'},
     },
     models: {
         Post: PostSchema,
         PostVersion: PostVersionSchema,
         PostTag: PostTagSchema,
+        PostMeta: PostMetaSchema,
         Tag: TagSchema,
         Image: ImageSchema,
     }
@@ -36,17 +38,20 @@ export const ddb = new Table({
     createdField: 'created_at',
 })
 
-export type TagType = Entity<typeof TagProperties>;
+export type TagType = Entity<typeof TagSchema>;
 export const Tag = ddb.getModel<TagType>('Tag');
 
-export type ImageType = Entity<typeof ImageProperties>
+export type ImageType = Entity<typeof ImageSchema>
 export const Image = ddb.getModel<ImageType>('Image');
 
-export type ModelType = Entity<typeof PostProperties>;
+export type ModelType = Entity<typeof PostSchema>;
 export const Post = ddb.getModel<ModelType>('Post');
 
-export type PostTagType = Entity<typeof PostTagProperties>;
+export type PostTagType = Entity<typeof PostTagSchema>;
 export const PostTag = ddb.getModel<PostTagType>('PostTag');
 
-export type PostVersionType = Entity<typeof PostProperties>;
+export type PostVersionType = Entity<typeof PostVersionSchema>;
 export const PostVersion = ddb.getModel<PostVersionType>('PostVersion');
+
+export type PostMetaType = Entity<typeof PostMetaSchema>;
+export const PostMeta = ddb.getModel<PostMetaType>('PostMeta');

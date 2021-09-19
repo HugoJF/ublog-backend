@@ -1,5 +1,3 @@
-import {OneModelSchema} from "dynamodb-onetable";
-
 export const PostProperties = {
     version: {type: Number, required: true},
     title: {type: String, required: true},
