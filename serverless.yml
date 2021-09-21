@@ -3,6 +3,7 @@ service: ublog-backend
 frameworkVersion: '2'
 
 plugins:
+  - serverless-stage-manager
   - serverless-plugin-typescript
   - serverless-dynamodb-local
   - serverless-offline
@@ -11,13 +12,38 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
+  stage: ${opt:stage, 'local'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Resource:
+            Fn::Join:
+              - ""
+              - - Fn::GetAtt:
+                    - ublogTable
+                    - Arn
+                - "/*"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+  environment:
+    DDB_NAME: ${self:custom.ddbName.${self:provider.stage}}
+    DDB_REGION: ${self:custom.ddbRegion.${self:provider.stage}}
+    DDB_ENDPOINT: ${self:custom.ddbEndpoint.${self:provider.stage}}
+    DDB_ACCESS_KEY: ${self:custom.ddbAccessKey.${self:provider.stage}}
+    DDB_SECRET_KEY: ${self:custom.ddbSecretKey.${self:provider.stage}}
 
 resources: # CloudFormation template syntax
   Resources:
-    usersTable:
+    ublogTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ublog
+        TableName: ${self:custom.ddbName.${self:provider.stage}}
         AttributeDefinitions:
           - AttributeName: pk
             AttributeType: S
@@ -50,10 +76,33 @@ resources: # CloudFormation template syntax
           WriteCapacityUnits: 1
 
 custom:
+  stages:
+    - local
+    - dev
+    - prod
+
+  ddbName:
+    local: ublog
+    dev: ublog-dev
+  ddbRegion:
+    local: localhost
+    dev: us-east-2
+  ddbEndpoint:
+    local: http://localhost:8000
+    dev: https://dynamodb.us-east-2.amazonaws.com
+  ddbAccessKey:
+    local: DEFAULT_ACCESS_KEY
+    dev: ''
+  ddbSecretKey:
+    local: DEFAULT_SECRET
+    dev: ''
+
   dynamodb:
     # If you only want to use DynamoDB Local in some stages, declare them here
     stages:
+      - local
       - dev
+      - prod
     start:
       port: 8000
       inMemory: true

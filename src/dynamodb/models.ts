@@ -32,7 +32,7 @@ export const MySchema: OneSchema = {
 
 export const ddb = new Table({
     client: client,
-    name: 'ublog',
+    name: process.env.DDB_NAME,
     schema: MySchema,
     timestamps: true,
     createdField: 'created_at',
