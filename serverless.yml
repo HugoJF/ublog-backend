@@ -16,6 +16,13 @@ provider:
   stage: ${opt:stage, 'local'}
   httpApi:
     cors: true
+    authorizers:
+      cognitoAuthorizer:
+        name: cognitoAuthorizer
+        type: jwt
+        identitySource: $request.header.Authorization
+        issuerUrl: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Z5Cw4Zq7c
+        audience: [v2ki29kbh7q9po090ti70nuo7, v2ki29kbh7q9po090ti70nuo7]
   iam:
     role:
       statements:
@@ -35,6 +42,8 @@ provider:
             - dynamodb:UpdateItem
             - dynamodb:DeleteItem
   environment:
+    COGNITO_POOL_ID: us-east-1_Z5Cw4Zq7c
+    COGNITO_CLIENT_ID: v2ki29kbh7q9po090ti70nuo7
     DDB_NAME: ${self:custom.ddbName.${self:provider.stage}}
     DDB_REGION: ${self:custom.ddbRegion.${self:provider.stage}}
     DDB_ENDPOINT: ${self:custom.ddbEndpoint.${self:provider.stage}}
@@ -132,10 +141,18 @@ custom:
     # Uncomment only if you already have a DynamoDB running locally
 
 functions:
+  auth:
+    handler: src/handlers/auth/index.auth
+    events:
+      - httpApi: 'POST /auth'
   postsVersions:
     handler: src/handlers/posts/index.versions
     events:
-      - httpApi: 'GET /posts/{slug}/versions'
+      - httpApi:
+          method: GET
+          path: /posts/{slug}/versions
+          authorizer:
+            name: cognitoAuthorizer
   postVersion:
     handler: src/handlers/posts/index.get
     events:
@@ -147,7 +164,11 @@ functions:
   postsStore:
     handler: src/handlers/posts/index.store
     events:
-      - httpApi: 'POST /posts'
+      - httpApi:
+          path: /posts
+          method: POST
+          authorizer:
+            name: cognitoAuthorizer
   postsGet:
     handler: src/handlers/posts/index.get
     events:
@@ -155,15 +176,27 @@ functions:
   postsDelete:
     handler: src/handlers/posts/index.delete
     events:
-      - httpApi: 'DELETE /posts/{slug}'
+      - httpApi:
+          method: DELETE
+          path: /posts/{slug}
+          authorizer:
+            name: cognitoAuthorizer
   postsRollback:
     handler: src/handlers/posts/index.rollback
     events:
-      - httpApi: 'PUT /posts/{slug}/versions/{version}'
+      - httpApi:
+          method: PUT
+          path: /posts/{slug}/versions/{version}
+          authorizer:
+            name: cognitoAuthorizer
   tagsStore:
     handler: src/handlers/tags/index.store
     events:
-      - httpApi: 'POST /tags'
+      - httpApi:
+          method: POST
+          path: /tags
+          authorizer:
+            name: cognitoAuthorizer
   tagsIndex:
     handler: src/handlers/tags/index.index
     events:
@@ -171,11 +204,19 @@ functions:
   tagPostStore:
     handler: src/handlers/tags/index.tag
     events:
-      - httpApi: 'POST /posts/{post_slug}/tag/{tag_slug}'
+      - httpApi:
+          method: POST
+          path: /posts/{post_slug}/tag/{tag_slug}
+          authorizer:
+            name: cognitoAuthorizer
   tagPostDelete:
     handler: src/handlers/tags/index.untag
     events:
-      - httpApi: 'DELETE /posts/{post_slug}/tag/{tag_slug}'
+      - httpApi:
+          method: DELETE
+          path: /posts/{post_slug}/tag/{tag_slug}
+          authorizer:
+            name: cognitoAuthorizer
   listPostTags:
     handler: src/handlers/tags/index.list
     events:

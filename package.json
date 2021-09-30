@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "postinstall": "sls dynamodb install",
-    "start": "concurrently -n DDB,WEB -c blue,green \"sls dynamodb start\" \"sls offline\""
+    "start": "concurrently -n DDB,WEB -c blue,green \"sls dynamodb start\" \"sls offline --ignoreJWTSignature\""
   },
   "dependencies": {
     "@types/aws-lambda": "^8.10.83",
+    "amazon-cognito-identity-js": "^5.1.2",
     "aws-lambda": "^1.0.6",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
