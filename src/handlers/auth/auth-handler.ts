@@ -14,9 +14,11 @@ export class AuthHandler extends BaseHandler {
     async handle() {
         const body = await this.parseBody(PostAuthRequest);
 
-        return await this.auth.auth({
+        const token = await this.auth.auth({
             Username: body.username,
             Password: body.password,
         });
+
+        return {token}
     }
 }
