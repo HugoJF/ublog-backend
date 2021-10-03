@@ -23,6 +23,7 @@ provider:
         issuerUrl: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Z5Cw4Zq7c
         audience: [v2ki29kbh7q9po090ti70nuo7, v2ki29kbh7q9po090ti70nuo7]
   iam:
+    deploymentRole: arn:aws:iam::186669703643:role/cloudformation-creation-role
     role:
       statements:
         - Effect: Allow
