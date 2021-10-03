@@ -7,7 +7,6 @@ plugins:
   - serverless-plugin-typescript
   - serverless-dynamodb-local
   - serverless-offline
-  - serverless-aws-resource-names
 
 provider:
   name: aws
@@ -88,8 +87,6 @@ resources: # CloudFormation template syntax
           WriteCapacityUnits: 1
 
 custom:
-  serverless-aws-resource-names:
-    source: aws-resource-name-mapping.json
   stages:
     - local
     - dev
