@@ -4,8 +4,8 @@ import {PostService} from "../src/services/post-service";
 import {Post} from "../src/entities/post";
 
 const slug = 'my-slug';
-const v1: Post = {slug: slug, body: '# my title', title: 'first post'};
-const v2: Post = {slug: slug, body: '# my **title**', title: 'still my first post'};
+const v1: Post = {slug: slug, abstract: '', public: true, body: '# my title', title: 'first post'};
+const v2: Post = {slug: slug, abstract: '', public: true, body: '# my **title**', title: 'still my first post'};
 
 const service = container.resolve(PostService);
 
