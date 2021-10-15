@@ -126,10 +126,6 @@ custom:
     # Uncomment only if you already have a DynamoDB running locally
 
 functions:
-  auth:
-    handler: src/handlers/auth/index.auth
-    events:
-      - httpApi: 'POST /auth'
   postsVersions:
     handler: src/handlers/posts/index.versions
     events:
