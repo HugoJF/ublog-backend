@@ -11,6 +11,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  region: us-east-2
   lambdaHashingVersion: 20201221
   stage: ${opt:stage, 'local'}
   httpApi:
@@ -33,7 +34,7 @@ provider:
               - - Fn::GetAtt:
                     - ublogTable
                     - Arn
-                - "/*"
+                - "*"
           Action:
             - dynamodb:Query
             - dynamodb:Scan
