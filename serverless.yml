@@ -187,7 +187,7 @@ functions:
     events:
       - httpApi:
           method: POST
-          path: /posts/{post_slug}/tag/{tag_slug}
+          path: /posts/{post_slug}/tags/{tag_slug}
           authorizer:
             name: cognitoAuthorizer
   tagPostDelete:
@@ -195,7 +195,7 @@ functions:
     events:
       - httpApi:
           method: DELETE
-          path: /posts/{post_slug}/tag/{tag_slug}
+          path: /posts/{post_slug}/tags/{tag_slug}
           authorizer:
             name: cognitoAuthorizer
   listPostTags:
