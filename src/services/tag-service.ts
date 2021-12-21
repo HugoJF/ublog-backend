@@ -17,7 +17,7 @@ export class TagService {
             Tag.get({
                 slug: id,
             }, {batch})
-        })
+        });
 
         const response = await ddb.batchGet(batch);
 
@@ -29,7 +29,7 @@ export class TagService {
             gsi1pk: 'tag',
         }, {
             index: 'gsi1',
-        })
+        });
     }
 
     async put(tag: TagEntity) {
@@ -40,24 +40,21 @@ export class TagService {
         return await PostTag.create({
             post_slug: postSlug,
             tag_slug: tagSlug,
-        })
+        });
     }
 
     async untagPost(postSlug: string, tagSlug: string) {
         return await PostTag.remove({
             post_slug: postSlug,
             tag_slug: tagSlug,
-        })
+        });
     }
 
     async listTags(slug: string): Promise<string[]> {
         const raw = await PostTag.find({
             post_slug: slug,
-        })
+        });
 
-        const ids = collect(raw)
-            .map(item => item['tag_slug']);
-
-        return ids.toArray()
+        return collect(raw).pluck('tag_slug').toArray();
     }
 }

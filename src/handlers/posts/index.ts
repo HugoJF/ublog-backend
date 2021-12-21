@@ -13,4 +13,3 @@ module.exports.get = generateHandler(PostGetHandler);
 module.exports.store = generateHandler(PostStoreHandler);
 module.exports.versions = generateHandler(PostVersionsHandler);
 module.exports.delete = generateHandler(PostDeleteHandler);
-module.exports.rollback = generateHandler(PostRollbackHandler);

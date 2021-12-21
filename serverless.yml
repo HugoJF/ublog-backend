@@ -163,14 +163,6 @@ functions:
           path: /posts/{slug}
           authorizer:
             name: cognitoAuthorizer
-  postsRollback:
-    handler: src/handlers/posts/index.rollback
-    events:
-      - httpApi:
-          method: PUT
-          path: /posts/{slug}/versions/{version}
-          authorizer:
-            name: cognitoAuthorizer
   tagsStore:
     handler: src/handlers/tags/index.store
     events:

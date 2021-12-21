@@ -12,17 +12,16 @@ export class PostService {
             index: 'gsi1',
             reverse: true,
         });
-
     }
 
     async versions(slug: string) {
         const response = await PostVersion.find({
             slug: slug,
-        })
+        });
 
         return {
-            versions: collect(response).pluck('version').all()
-        };
+            versions: collect(response).pluck('version').all(),
+        }
     }
 
     async get(slug: string, version = 0) {
@@ -37,31 +36,24 @@ export class PostService {
 
         const items = await ddb.queryItems({
             pk: `post:${slug}`,
-        })
+        });
 
         collect(items).each(item => {
             ddb.deleteItem({
                 pk: item['pk'],
                 sk: item['sk'],
             }, {batch})
-        }).toArray()
-
+        }).toArray();
 
         await ddb.batchWrite(batch);
 
         return;
     }
 
-    async rollBack(slug: string, version: number) {
-        const post = await this.get(slug, version);
-
-        return await Post.update(post);
-    }
-
     async latestVersion(slug: string) {
         const meta = await PostMeta.get({
             slug: slug,
-        })
+        });
 
         return meta?.last_version;
     }
@@ -78,21 +70,19 @@ export class PostService {
         const versionedPost: PostDto = {
             ...post,
             version: next,
-        }
+        };
 
         // Put v0
         await Post.create({
             ...versionedPost,
         }, {
             exists: null,
-        })
+        });
 
         // Create new version
         await PostVersion.create({
             ...versionedPost,
-        }, {
-            exists: null,
-        })
+        });
 
         // Store metadata
         if (!current) {
