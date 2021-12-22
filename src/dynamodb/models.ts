@@ -16,6 +16,7 @@ export const client = new DynamoDB.DocumentClient({
 })
 
 export const MySchema: OneSchema = {
+    version: '1',
     indexes: {
         primary: {hash: 'pk', sort: 'sk'},
         gsi1: {hash: 'gsi1pk', sort: 'gsi1sk'},
@@ -38,8 +39,8 @@ export const ddb = new Table({
     createdField: 'created_at',
     isoDates: true,
     logger: (level, message, context) => {
-        console.log(`${new Date().toLocaleString()}: ${level}: ${message}`)
-        console.log(JSON.stringify(context, null, 4) + '\n')
+        // console.log(`${new Date().toLocaleString()}: ${level}: ${message}`)
+        // console.log(JSON.stringify(context, null, 4) + '\n')
     }
 })
 

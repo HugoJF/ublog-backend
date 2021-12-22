@@ -4,7 +4,3 @@ export default {
     accessKeyId: process.env.DDB_ACCESS_KEY,
     secretAccessKey: process.env.DDB_SECRET_KEY,
 }
-
-console.log({
-    env: process.env,
-})

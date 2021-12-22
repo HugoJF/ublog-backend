@@ -128,7 +128,7 @@ custom:
 
 functions:
   postsVersions:
-    handler: src/handlers/posts/index.versions
+    handler: src/handlers/index.postVersions
     events:
       - httpApi:
           method: GET
@@ -136,15 +136,15 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   postVersion:
-    handler: src/handlers/posts/index.get
+    handler: src/handlers/index.postGet
     events:
       - httpApi: 'GET /posts/{slug}/versions/{version}'
   postsIndex:
-    handler: src/handlers/posts/index.index
+    handler: src/handlers/index.postIndex
     events:
       - httpApi: 'GET /posts'
   postsStore:
-    handler: src/handlers/posts/index.store
+    handler: src/handlers/index.postStore
     events:
       - httpApi:
           path: /posts
@@ -152,11 +152,11 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   postsGet:
-    handler: src/handlers/posts/index.get
+    handler: src/handlers/index.postGet
     events:
       - httpApi: 'GET /posts/{slug}'
   postsDelete:
-    handler: src/handlers/posts/index.delete
+    handler: src/handlers/index.postDelete
     events:
       - httpApi:
           method: DELETE
@@ -164,7 +164,7 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   tagsStore:
-    handler: src/handlers/tags/index.store
+    handler: src/handlers/index.tagStore
     events:
       - httpApi:
           method: POST
@@ -172,11 +172,11 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   tagsIndex:
-    handler: src/handlers/tags/index.index
+    handler: src/handlers/index.tagIndex
     events:
       - httpApi: 'GET /tags'
   tagPostStore:
-    handler: src/handlers/tags/index.tag
+    handler: src/handlers/index.tagTag
     events:
       - httpApi:
           method: POST
@@ -184,7 +184,7 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   tagPostDelete:
-    handler: src/handlers/tags/index.untag
+    handler: src/handlers/index.tagUntag
     events:
       - httpApi:
           method: DELETE
@@ -192,6 +192,6 @@ functions:
           authorizer:
             name: cognitoAuthorizer
   listPostTags:
-    handler: src/handlers/tags/index.list
+    handler: src/handlers/index.tagList
     events:
       - httpApi: 'GET /posts/{slug}/tags'
