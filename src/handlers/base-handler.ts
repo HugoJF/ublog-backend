@@ -43,7 +43,13 @@ export abstract class BaseHandler {
 
         const errors = await validate(entity);
         if (errors.length > 0) {
-            throw new EntityValidationError(errors);
+            try {
+                throw new EntityValidationError(errors);
+            } catch (e){
+                console.log(typeof e)
+                console.log('asd', e instanceof EntityValidationError)
+                throw e
+            }
         }
 
         return entity;

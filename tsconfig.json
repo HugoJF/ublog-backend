@@ -3,17 +3,18 @@
     "handlers/**/*"
   ],
   "compilerOptions": {
+    "module": "CommonJS",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "preserveConstEnums": true,
     "strictNullChecks": true,
     "sourceMap": true,
     "allowJs": true,
-    "target": "es5",
+    "target": "esnext",
     "outDir": ".build",
     "moduleResolution": "node",
     "lib": [
-      "es2015"
+      "es2019"
     ],
     "rootDir": "./src"
   }
