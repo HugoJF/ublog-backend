@@ -2,7 +2,7 @@ import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {GetPostRequest} from "../../requests/get-post-request";
 import {PostService} from "../../services/post-service";
-import {plainToClass} from "class-transformer";
+import {plainToInstance} from "class-transformer";
 import {Post} from "../../entities/post";
 
 @injectable()
@@ -22,6 +22,6 @@ export class PostGetHandler extends BaseHandler {
 
         const raw = await this.posts.get(pathParameters.slug, pathParameters.version);
 
-        return plainToClass(Post, raw, {excludeExtraneousValues: true});
+        return plainToInstance(Post, raw, {excludeExtraneousValues: true});
     }
 }

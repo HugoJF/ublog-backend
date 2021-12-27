@@ -1,7 +1,7 @@
 import {BaseHandler} from "../base-handler";
 import {injectable} from "tsyringe";
 import {TagService} from "../../services/tag-service";
-import {plainToClass} from "class-transformer";
+import {plainToInstance} from "class-transformer";
 import {Tag} from "../../entities/tag";
 
 @injectable()
@@ -19,6 +19,6 @@ export class TagIndexHandler extends BaseHandler {
             return [];
         }
 
-        return plainToClass(Tag, raw, {excludeExtraneousValues: true});
+        return plainToInstance(Tag, raw, {excludeExtraneousValues: true});
     }
 }

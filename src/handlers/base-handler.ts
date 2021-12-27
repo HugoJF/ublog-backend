@@ -1,7 +1,7 @@
 import {APIGatewayEvent} from "aws-lambda";
 import {validate} from "class-validator";
 import {EntityValidationError} from "../errors/validation-error";
-import {plainToClass} from "class-transformer";
+import {plainToInstance} from "class-transformer";
 import {ClassConstructor} from "class-transformer/types/interfaces";
 import {InvalidDataError} from "../errors/invalid-data-error";
 
@@ -39,17 +39,11 @@ export abstract class BaseHandler {
             throw new InvalidDataError(data);
         }
 
-        const entity = plainToClass(validatorClass, data);
-
+        const entity = plainToInstance(validatorClass, data);
         const errors = await validate(entity);
+
         if (errors.length > 0) {
-            try {
-                throw new EntityValidationError(errors);
-            } catch (e){
-                console.log(typeof e)
-                console.log('asd', e instanceof EntityValidationError)
-                throw e
-            }
+            throw new EntityValidationError(errors);
         }
 
         return entity;
