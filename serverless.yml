@@ -11,7 +11,6 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  region: us-east-2
   lambdaHashingVersion: 20201221
   stage: ${opt:stage, 'local'}
   httpApi:
@@ -88,6 +87,13 @@ resources: # CloudFormation template syntax
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
+    ApiMapping:
+      Type: AWS::ApiGatewayV2::ApiMapping
+      Properties:
+        DomainName: ${self:provider.stage}--blog.${aws:region}.aws.hugo.dev.br
+        ApiId: !Ref HttpApi
+        Stage: !Ref HttpApiStage
+
 custom:
   stages:
     - local
@@ -95,20 +101,25 @@ custom:
     - prod
 
   ddbName:
-    local: ublog
+    local: ublog-local
     dev: ublog-dev
+    prod: ublog-prod
   ddbRegion:
     local: localhost
     dev: us-east-2
+    prod: sa-east-1
   ddbEndpoint:
     local: http://localhost:8000
     dev: https://dynamodb.us-east-2.amazonaws.com
+    prod: https://dynamodb.sa-east-1.amazonaws.com
   ddbAccessKey:
     local: DEFAULT_ACCESS_KEY
     dev: ''
+    prod: ''
   ddbSecretKey:
     local: DEFAULT_SECRET
     dev: ''
+    prod: ''
 
   dynamodb:
     # If you only want to use DynamoDB Local in some stages, declare them here
